@@ -79,10 +79,14 @@ bool hash_table_insert(HashTable *table, const char *key, int value) {
     
     // 创建新节点
     Entry *new_entry = (Entry*)malloc(sizeof(Entry));
-    if (!new_entry) return false;
+    if (!new_entry) {
+        fprintf(stderr, "错误: 无法分配内存用于新哈希表条目\n");
+        return false;
+    }
     
     new_entry->key = strdup(key);
     if (!new_entry->key) {
+        fprintf(stderr, "错误: 无法分配内存用于键\n");
         free(new_entry);
         return false;
     }
@@ -151,10 +155,21 @@ bool hash_table_remove(HashTable *table, const char *key) {
 
 // 调整哈希表大小
 void hash_table_resize(HashTable *table) {
+    if (!table) return;
+    
+    // 防止整数溢出
+    if (table->capacity > (SIZE_MAX - 1) / 2) {
+        fprintf(stderr, "警告: 哈希表容量已达到最大值，无法扩容\n");
+        return;
+    }
+    
     size_t new_capacity = table->capacity * 2 + 1;
     Entry **new_buckets = (Entry**)calloc(new_capacity, sizeof(Entry*));
     
-    if (!new_buckets) return;
+    if (!new_buckets) {
+        fprintf(stderr, "错误: 无法分配内存用于扩容哈希表\n");
+        return;
+    }
     
     // 重新哈希所有元素
     for (size_t i = 0; i < table->capacity; i++) {
@@ -184,6 +199,11 @@ double hash_table_load_factor(HashTable *table) {
 
 // 打印统计信息
 void hash_table_print_stats(HashTable *table) {
+    if (!table) {
+        fprintf(stderr, "错误: 空哈希表指针\n");
+        return;
+    }
+    
     printf("哈希表统计信息:\n");
     printf("  容量: %zu\n", table->capacity);
     printf("  元素数量: %zu\n", table->size);

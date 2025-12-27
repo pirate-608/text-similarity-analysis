@@ -1,0 +1,47 @@
+# 编译产物
+build/
+*.o
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+
+# 调试文件
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# 编辑器和IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 测试和覆盖率
+*.gcov
+*.gcda
+*.gcno
+coverage/
+
+# 输出文件
+*.csv
+*.log
+similarity_matrix.csv
+
+# 临时文件
+*.tmp
+*.bak
+.cache/
+
+# 操作系统文件
+Thumbs.db
+Desktop.ini
+
+# 依赖管理
+.depend
+*.d

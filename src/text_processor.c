@@ -68,9 +68,32 @@ bool document_load_from_file(Document *doc, const char *filename) {
     long file_size = ftell(file);
     fseek(file, 0, SEEK_SET);
     
+    // 检查文件大小是否合理
+    if (file_size < 0) {
+        fprintf(stderr, "错误: 无法获取文件大小\n");
+        fclose(file);
+        return false;
+    }
+    
+    if (file_size == 0) {
+        fprintf(stderr, "警告: 文件为空: %s\n", filename);
+        fclose(file);
+        return false;
+    }
+    
+    // 限制最大文件大小（100MB）
+    const long MAX_FILE_SIZE = 100L * 1024 * 1024;
+    if (file_size > MAX_FILE_SIZE) {
+        fprintf(stderr, "错误: 文件太大 (%ld bytes)，超过限制 (%ld bytes)\n", 
+                file_size, MAX_FILE_SIZE);
+        fclose(file);
+        return false;
+    }
+    
     // 分配内存
     char *content = (char*)malloc(file_size + 1);
     if (!content) {
+        fprintf(stderr, "错误: 无法分配内存用于文件内容\n");
         fclose(file);
         return false;
     }
@@ -79,6 +102,10 @@ bool document_load_from_file(Document *doc, const char *filename) {
     size_t bytes_read = fread(content, 1, file_size, file);
     content[bytes_read] = '\0';
     fclose(file);
+    
+    if (bytes_read != (size_t)file_size) {
+        fprintf(stderr, "警告: 读取的字节数与文件大小不匹配\n");
+    }
     
     if (doc->content) {
         free(doc->content);
@@ -176,14 +203,27 @@ bool stop_words_add(StopWords *sw, const char *word) {
     
     // 检查是否需要扩容
     if (sw->size >= sw->capacity) {
-        sw->capacity *= 2;
-        char **new_words = realloc(sw->words, sw->capacity * sizeof(char*));
-        if (!new_words) return false;
+        // 防止整数溢出
+        if (sw->capacity > SIZE_MAX / 2) {
+            fprintf(stderr, "错误: 停用词表容量已达到最大值\n");
+            return false;
+        }
+        
+        size_t new_capacity = sw->capacity * 2;
+        char **new_words = realloc(sw->words, new_capacity * sizeof(char*));
+        if (!new_words) {
+            fprintf(stderr, "错误: 无法扩容停用词表\n");
+            return false;
+        }
         sw->words = new_words;
+        sw->capacity = new_capacity;
     }
     
     sw->words[sw->size] = strdup(word);
-    if (!sw->words[sw->size]) return false;
+    if (!sw->words[sw->size]) {
+        fprintf(stderr, "错误: 无法复制停用词\n");
+        return false;
+    }
     
     sw->size++;
     return true;
