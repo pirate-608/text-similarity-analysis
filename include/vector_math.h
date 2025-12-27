@@ -27,7 +27,7 @@ double jaccard_similarity(HashTable *ht1, HashTable *ht2);
 
 // 文档相似度函数
 double document_cosine_similarity(Document *doc1, Document *doc2);
-double* build_global_vector(Document **docs, size_t doc_count, size_t *vector_size);
+char** build_vocabulary(Document **docs, size_t doc_count, size_t *vocab_size);
 void document_to_vector(Document *doc, Vector *vec, char **vocab, size_t vocab_size);
 
 #endif

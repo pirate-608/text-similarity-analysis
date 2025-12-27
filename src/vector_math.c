@@ -228,3 +228,79 @@ double document_cosine_similarity(Document *doc1, Document *doc2) {
     
     return similarity;
 }
+
+// 构建全局词汇表
+char** build_vocabulary(Document **docs, size_t doc_count, size_t *vocab_size) {
+    if (!docs || doc_count == 0) return NULL;
+
+    HashTable *temp_ht = hash_table_create(1000);
+    if (!temp_ht) return NULL;
+
+    // 收集所有唯一单词
+    for (size_t i = 0; i < doc_count; i++) {
+        if (!docs[i] || !docs[i]->word_freq) continue;
+        
+        HashTable *doc_ht = docs[i]->word_freq;
+        for (size_t j = 0; j < doc_ht->capacity; j++) {
+            Entry *entry = doc_ht->buckets[j];
+            while (entry) {
+                if (hash_table_get(temp_ht, entry->key) == -1) {
+                    hash_table_insert(temp_ht, entry->key, 1);
+                }
+                entry = entry->next;
+            }
+        }
+    }
+
+    *vocab_size = temp_ht->unique_words;
+    if (*vocab_size == 0) {
+        hash_table_destroy(temp_ht);
+        return NULL;
+    }
+
+    char **vocab = (char**)malloc(*vocab_size * sizeof(char*));
+    if (!vocab) {
+        hash_table_destroy(temp_ht);
+        return NULL;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < temp_ht->capacity; i++) {
+        Entry *entry = temp_ht->buckets[i];
+        while (entry) {
+            vocab[index++] = strdup(entry->key);
+            entry = entry->next;
+        }
+    }
+
+    hash_table_destroy(temp_ht);
+    return vocab;
+}
+
+// 将文档转换为基于词汇表的向量
+void document_to_vector(Document *doc, Vector *vec, char **vocab, size_t vocab_size) {
+    if (!doc || !vec || !vocab) return;
+
+    // 重置向量
+    vec->size = 0;
+    
+    // 预分配空间以避免多次realloc
+    if (vec->capacity < vocab_size) {
+        vec->capacity = vocab_size;
+        double *new_data = realloc(vec->data, vec->capacity * sizeof(double));
+        if (new_data) {
+            vec->data = new_data;
+        } else {
+            return; // 内存分配失败
+        }
+    }
+
+    // 填充数据
+    for (size_t i = 0; i < vocab_size; i++) {
+        int freq = hash_table_get(doc->word_freq, vocab[i]);
+        double val = (freq != -1) ? (double)freq : 0.0;
+        
+        // 直接操作数据数组比调用vector_add更高效且安全（因为我们已经处理了容量）
+        vec->data[vec->size++] = val;
+    }
+}
