@@ -1,0 +1,3 @@
+The weather today is sunny with a chance of rain in the afternoon.
+Temperatures will reach a high of 25 degrees Celsius.
+Residents are advised to carry an umbrella just in case.

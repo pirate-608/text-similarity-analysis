@@ -1,0 +1,5 @@
+Software engineering is the systematic application of engineering approaches to the development of software.
+A key principle is "Don't Repeat Yourself" (DRY), which aims to reduce repetition of software patterns.
+Another important concept is SOLID, a set of five design principles intended to make software designs more understandable, flexible, and maintainable.
+Good software engineering practices lead to reliable and efficient software systems.
+Testing and documentation are also integral parts of the software engineering lifecycle.
