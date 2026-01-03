@@ -48,9 +48,19 @@ TEST_SRCS = $(wildcard $(TEST_DIR)/test_*.c)
 TEST_TARGETS = $(patsubst $(TEST_DIR)/test_%.c,$(BIN_DIR)/test_%,$(TEST_SRCS))
 
 # 默认目标
-.PHONY: all clean test run debug install help
+.PHONY: all clean test run debug install help shared
 
 all: $(TARGET)
+
+# 共享库
+SHARED_TARGET = $(BIN_DIR)/libsimilarity.dll
+LIB_OBJS = $(filter-out $(OBJ_DIR)/main.o,$(OBJS))
+
+shared: $(LIB_OBJS)
+	$(call MKDIR_P,$(BIN_DIR))
+	@echo "Linking shared library $(SHARED_TARGET)..."
+	@$(CC) -shared -o $(SHARED_TARGET) $(LIB_OBJS) $(LDFLAGS)
+	@echo "Shared library build complete: $(SHARED_TARGET)"
 
 # 主程序
 $(TARGET): $(OBJS)

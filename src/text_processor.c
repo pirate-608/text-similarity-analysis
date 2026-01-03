@@ -57,7 +57,7 @@ void document_destroy(Document *doc) {
 bool document_load_from_file(Document *doc, const char *filename) {
     if (!doc || !filename) return false;
     
-    FILE *file = fopen(filename, "r");
+    FILE *file = fopen(filename, "rb");
     if (!file) {
         fprintf(stderr, "错误: 无法打开文件 %s\n", filename);
         return false;

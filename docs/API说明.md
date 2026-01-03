@@ -46,3 +46,25 @@
 ## 扩展示例
 - 新增相似度函数：在 `vector_math.c` 添加实现，在 `file_manager` 中调用以填充矩阵；或在 `ui` 中增加菜单项。
 - 新增输入过滤：在 `text_processor.c` 修改 `is_word_char` 与停用词逻辑。
+
+## Web API (Python Bridge)
+位于 `web/core_bridge.py`，通过 `ctypes` 封装 C 接口。
+
+### `class SimilarityEngine`
+- `__init__(self)`: 初始化引擎，加载动态库并创建停用词表。
+- `process_directory(self, dir_path)`: 处理指定目录下的文档。
+  - **参数**: `dir_path` (str) - 包含 `.txt` 文件的目录路径。
+  - **返回**: `dict` - 包含 `filenames` (list of str) 和 `matrix` (list of list of float)。
+  - **说明**: 自动调用 C 层的 `load_documents_from_dir` 和 `similarity_matrix_create`，并负责内存清理。
+
+### REST API (Flask)
+- `POST /analyze`
+  - **Content-Type**: `multipart/form-data`
+  - **参数**: `files[]` - 上传的一个或多个 `.txt` 文件。
+  - **返回**: JSON 对象
+    ```json
+    {
+      "filenames": ["doc1.txt", "doc2.txt"],
+      "matrix": [[1.0, 0.5], [0.5, 1.0]]
+    }
+    ```
