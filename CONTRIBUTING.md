@@ -57,6 +57,14 @@ void processDoc(Document* doc){
 }
 ```
 
+### Python 代码风格 (Web 界面)
+
+- 遵循 [PEP 8](https://www.python.org/dev/peps/pep-0008/) 规范
+- 使用 4 空格缩进
+- 变量和函数名使用 `snake_case`
+- 类名使用 `PascalCase`
+- 确保 `core_bridge.py` 中的 ctypes 定义与 C 头文件保持一致
+
 ### 内存管理
 
 - 每个 `malloc` 必须有对应的 `free`
@@ -79,10 +87,17 @@ make debug
 
 ### 测试
 
-- 为新功能添加单元测试
-- 测试边界情况和错误条件
-- 确保测试可重复运行
-- 测试文件命名：`test_<module>.c`
+- **C 核心**：
+    - 为新功能添加单元测试
+    - 测试边界情况和错误条件
+    - 确保测试可重复运行
+    - 测试文件命名：`test_<module>.c`
+    - 运行测试：`make test`
+
+- **Web 界面**：
+    - 确保 Flask 应用可以正常启动
+    - 测试文件上传和分析流程
+    - 验证 C 扩展库加载正常 (`make shared`)
 
 ```c
 void test_new_feature() {
@@ -193,6 +208,6 @@ double my_similarity(Document *doc1, Document *doc2) {
 
 ## 联系方式
 
-如有问题，请通过 issue 或邮件联系维护者。
+如有问题，请通过 issue 或邮件（huangmaidou608@outlook.com）联系维护者。
 
 感谢您的贡献！ 🎉

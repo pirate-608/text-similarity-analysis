@@ -5,15 +5,22 @@
 ### 构建和运行
 
 ```bash
-# 构建项目
+# 构建 CLI 工具
 make
 
-# 运行程序（交互模式）
+# 构建 Web 界面依赖库
+make shared
+
+# 运行 CLI 程序（交互模式）
 make run
 # 或
 ./build/bin/similarity
 
-# 批处理模式
+# 运行 Web 界面
+python web/app.py
+# 访问 http://127.0.0.1:5000
+
+# 批处理模式 (CLI)
 ./build/bin/similarity -d ./samples/small -o results.csv
 ```
 
@@ -56,8 +63,9 @@ make clean
 | `-d <目录>` | 指定文档目录（启用批处理） | `-d ./data` |
 | `-o <文件>` | 输出 CSV 文件名 | `-o output.csv` |
 | `-s <文件>` | 停用词文件 | `-s stopwords.txt` |
-| `-g` | 图形界面（未实现） | `-g` |
 | `-h` | 帮助信息 | `-h` |
+
+**注意：** 图形界面请使用 Web 模式 (`python web/app.py`)。
 
 **示例：**
 ```bash
@@ -83,7 +91,23 @@ make clean
 | 0 | 退出 |
 
 ---
+Web 界面操作
 
+1.  **启动服务**：
+    ```bash
+    make shared
+    pip install flask
+    python web/app.py
+    ```
+2.  **使用功能**：
+    - 打开浏览器访问 `http://127.0.0.1:5000`
+    - 点击 "选择文件" 上传多个 `.txt` 文档
+    - 点击 "开始分析"
+    - 查看生成的相似度矩阵和热力图
+
+---
+
+## 
 ## 核心 API
 
 ### 文档处理
