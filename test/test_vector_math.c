@@ -191,7 +191,7 @@ void test_jaccard_similarity() {
     hash_table_insert(doc2->word_freq, "b", 2);
     hash_table_insert(doc2->word_freq, "d", 1);
     
-    double jac = jaccard_similarity(doc1, doc2);
+    double jac = jaccard_similarity(doc1->word_freq, doc2->word_freq);
     // 交集: {a, b} = 2
     // 并集: {a, b, c, d} = 4
     // Jaccard = 2/4 = 0.5

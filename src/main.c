@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include "hashtable.h"
 #include "text_processor.h"
 #include "vector_math.h"
@@ -15,6 +20,20 @@ typedef struct {
     int use_gui;
     int batch_mode;
 } CommandLineArgs;
+
+// 保证在 Windows 控制台下使用 UTF-8 输出，避免中文乱码
+static void setup_console_encoding(void) {
+#ifdef _WIN32
+    // 先把控制台切换到 UTF-8 代码页
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+#endif
+
+    // 将 C 运行时的多字节编码固定为 UTF-8，避免默认 CP936 造成乱码
+    if (!setlocale(LC_ALL, "C.UTF-8")) {
+        setlocale(LC_ALL, ".UTF-8");
+    }
+}
 
 CommandLineArgs parse_arguments(int argc, char *argv[]) {
     CommandLineArgs args = {0};
@@ -134,6 +153,8 @@ void interactive_mode() {
 
 // 主函数
 int main(int argc, char *argv[]) {
+    setup_console_encoding();
+
     printf("文本相似度分析系统 v1.0\n");
     printf("=======================\n\n");
     

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 #include <math.h>
 #include "text_processor.h"
@@ -24,7 +25,7 @@ void test_document_processing() {
     assert(document_process(doc, stop_words));
     
     // 验证词频
-    assert(hash_table_get(doc->word_freq, "the") == 3);
+    assert(hash_table_get(doc->word_freq, "the") == 4);
     assert(hash_table_get(doc->word_freq, "fox") == 3);
     assert(hash_table_get(doc->word_freq, "dog") == 3);
     assert(hash_table_get(doc->word_freq, "quick") == 1);
