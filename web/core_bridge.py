@@ -97,7 +97,19 @@ class SimilarityEngine:
             size = matrix.contents.size
             # Read filenames
             for i in range(size):
-                result["filenames"].append(matrix.contents.filenames[i].decode('utf-8'))
+                raw_name = matrix.contents.filenames[i]
+                try:
+                    # Try UTF-8 first
+                    decoded_name = raw_name.decode('utf-8')
+                except UnicodeDecodeError:
+                    try:
+                        # Fallback to GBK (common for Chinese Windows)
+                        decoded_name = raw_name.decode('gbk')
+                    except UnicodeDecodeError:
+                        # Fallback to system default or ignore errors
+                        decoded_name = raw_name.decode('mbcs', errors='replace') if os.name == 'nt' else raw_name.decode('utf-8', errors='replace')
+                
+                result["filenames"].append(decoded_name)
             
             # Read matrix
             for i in range(size):
