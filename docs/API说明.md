@@ -61,6 +61,9 @@
 - `POST /analyze`
   - **Content-Type**: `multipart/form-data`
   - **参数**: `files[]` - 上传的一个或多个 `.txt` 文件。
+  - **访问方式**: 
+    - 本地: `http://127.0.0.1:5000/analyze`
+    - 公网 (ngrok): `https://<your-id>.ngrok-free.app/analyze`
   - **返回**: JSON 对象
     ```json
     {
