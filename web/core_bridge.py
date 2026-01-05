@@ -1,6 +1,7 @@
 import ctypes
 import os
 import sys
+import platform
 
 # Define structures
 class HashTable(ctypes.Structure):
@@ -39,10 +40,19 @@ class StopWords(ctypes.Structure):
 def load_lib():
     # Assuming the DLL is in ../build/bin/libsimilarity.dll relative to this file
     base_path = os.path.dirname(os.path.abspath(__file__))
-    dll_path = os.path.join(base_path, "..", "build", "bin", "libsimilarity.dll")
+    
+    system = platform.system()
+    if system == "Windows":
+        lib_name = "libsimilarity.dll"
+    elif system == "Darwin":
+        lib_name = "libsimilarity.dylib"
+    else:
+        lib_name = "libsimilarity.so"
+
+    dll_path = os.path.join(base_path, "..", "build", "bin", lib_name)
     
     if not os.path.exists(dll_path):
-        raise FileNotFoundError(f"DLL not found at {dll_path}")
+        raise FileNotFoundError(f"Shared library not found at {dll_path}")
         
     lib = ctypes.CDLL(dll_path)
     

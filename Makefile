@@ -5,6 +5,7 @@ LDFLAGS = -lm
 
 # Platform helpers for shell commands
 ifeq ($(OS),Windows_NT)
+LIB_EXT = .dll
 SHELL := cmd.exe
 .SHELLFLAGS := /C
 define MKDIR_P
@@ -19,6 +20,12 @@ RUN_TESTS = @for %%t in ($(subst /,\,$(TEST_TARGETS))) do ( \
 	.\%%t || exit /b 1 \
 )
 else
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	LIB_EXT = .dylib
+else
+	LIB_EXT = .so
+endif
 define MKDIR_P
 	@mkdir -p "$(1)"
 endef
@@ -50,10 +57,10 @@ TEST_TARGETS = $(patsubst $(TEST_DIR)/test_%.c,$(BIN_DIR)/test_%,$(TEST_SRCS))
 # 默认目标
 .PHONY: all clean test run debug install help shared
 
-all: $(TARGET)
+all: $(TARGET) shared
 
 # 共享库
-SHARED_TARGET = $(BIN_DIR)/libsimilarity.dll
+SHARED_TARGET = $(BIN_DIR)/libsimilarity$(LIB_EXT)
 LIB_OBJS = $(filter-out $(OBJ_DIR)/main.o,$(OBJS))
 
 shared: $(LIB_OBJS)
